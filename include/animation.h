@@ -3,6 +3,8 @@
 #include <FastLED.h>
 #include "params.h"
 #include "tools.h"
+#include "task.h"
+
 
 extern CRGB leds[NUM_LEDS];
 

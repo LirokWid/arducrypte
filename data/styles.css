@@ -1,10 +1,9 @@
-/* Fond sombre pour tout le corps de la page */
+/* General Styles */
 body {
     background-color: #3D4849;
-    color: #ffffff; /* Texte en couleur claire */
-    font-family: Arial, sans-serif; /* Police de caractères */
+    color: #ffffff;
+    font-family: Arial, sans-serif;
 }
-
 
 h1 {
     color: #ffffff;
@@ -13,16 +12,14 @@ h1 {
     text-align: center;
 }
 
-/* BPM */
-/* Couleur de fond des éléments de contrôle */
+/* Log Window Styles */
 #logWindow {
     overflow: scroll;
-    overflow-x: hidden; /* Hide horizontal scrollbar */
+    overflow-x: hidden;
     width: 100%;
     height: 100px;
     left: 5%;
     right: 5%;
-
     margin-bottom: 1%;
     background-color: rgba(0, 0, 0, 0.5);
 }
@@ -34,16 +31,7 @@ h1 {
     margin-bottom: 1px;
 }
 
-#button-grid {
-    background-color: #1e1e1e;
-    border-radius: 10px;
-    padding: 20px;
-    display: block;
-    text-align: center;
-    font-size: 1.2em;
-    margin-top: 10px;
-}
-
+/* BPM Control Styles */
 #bpm-control > #bpm-slider {
     width: 100%;
 }
@@ -52,11 +40,9 @@ h1 {
     display: flex;
     justify-items: center;
     flex-direction: row;
-
     justify-content: center;
     font-size: larger;
     color: white;
-
     align-items: center;
     font-variant-numeric: slashed-zero;
     font-family: 'Motomangucode', sans-serif;
@@ -71,6 +57,7 @@ input[type="number"] {
     outline: none;
 }
 
+/* Color Picker Styles */
 #color_picker {
     grid-column: 3 / 4;
     grid-row: 4;
@@ -79,10 +66,11 @@ input[type="number"] {
     outline: none;
 }
 
+/* BPM Setup Styles */
 #bpm-setup {
     display: flex;
     flex-direction: row;
-'justify-content: space-around;
+    justify-content: space-around;
 }
 
 #set-reset-buttons {
@@ -94,6 +82,7 @@ input[type="number"] {
     width: 100px;
 }
 
+/* Corner Positions */
 .topRightCorner {
     position: absolute;
     top: 10px;
@@ -106,8 +95,8 @@ input[type="number"] {
     left: 10px;
 }
 
+/* Show BPM Styles */
 .show-bpm {
-    background-color: white; /* You can change the background color to your preference */
     background-color: #222;
     border-radius: 10px;
     border-style: solid;
@@ -130,9 +119,10 @@ input[type="number"] {
     width: 100%;
 }
 
+/* Container Styles */
 .container {
     display: grid;
-    grid-template-columns:  1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
     border-radius: 5px;
     padding: 10px;
@@ -157,10 +147,16 @@ input[type="number"] {
     margin-block-end: 0;
 }
 
-.sub-container
-{
+/* Sub Container Styles */
+.sub-container {
     display: grid;
-    grid-template-columns: 1fr 0.3fr 1fr;
+    grid-template-columns: 1fr 0.2fr 1fr;
+}
+.sub-container-event {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    grid-template-columns: 1fr 0.2fr 1fr;
 }
 
 .sub-container > .sub-container-title {
@@ -170,6 +166,7 @@ input[type="number"] {
     height: fit-content;
 }
 
+/* Color Sliders Styles */
 #color-sliders {
     grid-area: 2/1 / 4/2;
     display: flex;
@@ -179,6 +176,7 @@ input[type="number"] {
     height: available;
 }
 
+/* Brightness Styles */
 #brightness {
     grid-area: 4/1 / 4/4;
     display: flex;
@@ -196,6 +194,7 @@ input[type="number"] {
     height: available;
 }
 
+/* Color Display Styles */
 #color-display {
     display: flex;
     flex-direction: column;
@@ -204,26 +203,14 @@ input[type="number"] {
     height: available;
 }
 
-
+/* Color Mixed Styles */
 #color_mixed {
     height: available;
     width: available;
     background-color: rgb(100, 100, 100);
 }
 
-
-.color-slider {
-'display: inline-flex;
-    /* align-items items in column */
-'flex-direction: column;
-    /* center items horizontally */
-'align-items: center;
-    /* center items vertically */
-'justify-content: center; ' border: solid 2 px white;
-'vertical-align: 1; ' flex-direction: row;
-
-}
-
+/* Color Shortcut Styles */
 #color-shortcut {
     grid-area: 5/1 / 7/5;
     display: grid;
@@ -246,11 +233,10 @@ input[type="number"] {
 }
 
 .slider {
-'width: auto;
+    width: auto;
 }
 
-
-/* Boutons */
+/* Set-Reset Buttons Styles */
 #set-reset-buttons > button {
     background-color: #333;
     color: #ffffff;
@@ -261,6 +247,7 @@ input[type="number"] {
     cursor: pointer;
 }
 
+/* Animation Buttons Styles */
 #animation-buttons {
     display: grid;
     grid-area: 2/1 / 4/5;
@@ -270,41 +257,42 @@ input[type="number"] {
     height: available;
 }
 
+/* Event Buttons Styles */
 #event-buttons {
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     margin-top: 20px;
 }
 
-.event-button  {
+.event-button {
+    background-color: #333;
+
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 1px;
+    height: 100px;
+    width: available;
+    cursor: pointer;
+}
+
+.animation-button {
     background-color: #333;
     color: #ffffff;
     border: none;
     border-radius: 5px;
     padding: 10px 20px;
     margin: 1px;
-    height: 50px;
-
     cursor: pointer;
 }
 
-.animation-button  {
-    background-color: #333;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    margin: 1px;
-    cursor: pointer;
-}
-
-/* Style des boutons au survol */
+/* Button Hover and Active Styles */
 button:hover {
     background-color: #555;
 }
 
-/* Style du bouton actif */
 button.active {
-    background-color: #007bff; /* Bleu vif pour le bouton actif */
-    color: #ffffff;
+    background-color: #007bff;
 }

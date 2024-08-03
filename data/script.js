@@ -30,6 +30,7 @@ const colorButtons = document.querySelectorAll('.color-shortcut-button');
 
 //animations variables
 const animationButtons = document.querySelectorAll('.animation-button');
+const eventButtons = document.querySelectorAll('.event-button');
 const animationMode = document.getElementById('animation-mode');
 /////////////////////////////////////////////////
 
@@ -51,6 +52,7 @@ document.addEventListener('keydown', (event) => {
     //If key is a number
     //do not change if key is space
 
+    //Launch animations if a key number is pressed
     if (event.key >= 1 && event.key <= 9) {
         const animationNumber = event.key - 1;
         if (animationNumber !== undefined) {
@@ -67,6 +69,32 @@ document.addEventListener('keydown', (event) => {
         logThis("Animation changed to " + data.animation)
         server.sendAnimation(data.animation);
     }
+    if (event.key === '=') {
+        const animationNumber = 10;
+        data.animation = animationNumber;
+        animationMode.textContent = animationNumber.toString();
+        logThis("Animation changed to " + data.animation);
+        server.sendAnimation(data.animation);
+    }
+
+    //Lauch event base on key
+    if (event.key==='f'||event.key==='F')
+    {
+        const eventNumber = Events.FADE_BLACK;
+        data.event = eventNumber;
+        animationMode.textContent = eventNumber.toString();
+        logThis("Event changed to " + data.event);
+        server.sendEvent(data.event);
+    }
+    if (event.key==='b'||event.key==='B')
+    {
+        const eventNumber = Events.BLACKOUT;
+        data.event = eventNumber;
+        animationMode.textContent = eventNumber.toString();
+        logThis("Event changed to " + data.event);
+        server.sendEvent(data.event);
+    }
+    //TODO: link keys to events
 }, false);
 
 //BPM events
@@ -119,12 +147,11 @@ animationButtons.forEach((button) => {
         if (animationNumber !== undefined) {
             data.animation = animationNumber;
             animationMode.textContent = button.textContent;
-            logThis("Animation changed to " + data.animation)
+            logThis("Animation changed to " + button.textContent)
             server.sendAnimation(data.animation);
         }
     });
 });
-
 const Animations = {
     "STATIC": 0,
     "BPM": 1,
@@ -139,6 +166,23 @@ const Animations = {
     "SLIDE_Y_UP": 10,
     "FLASH_RANDOM_STICK": 11
 }//TODO: generate animation buttons from this list instead of hardcoding them in the html
+
+//Event events
+eventButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        //link button to event
+        const eventNumber = Events[button.textContent];
+        if (eventNumber !== undefined) {
+            logThis("Event sent to server : " + button.textContent);
+            server.sendEvent(eventNumber);
+        }//TODO: verify if this works
+    });
+});
+
+const Events = {
+    "FADE_BLACK": 0,
+    "BLACKOUT": 1
+}
 
 /////////////////////////////////////////////////
 
@@ -460,6 +504,10 @@ function serverCom() {
         send("ANIMATION:" + animation);
     }
 
+    function sendEvent(event) {
+        send("EVENT:" + event);
+    }
+
     function getValues() {
         send("getValues");
     }
@@ -507,7 +555,7 @@ function serverCom() {
     let lastValueSent = 0;
     const sendFrequency = 100; //ms
 
-    return {initWebSocket, closeWebSocket, sendBpm, sendColor, sendBrightness, sendAnimation, getValues};
+    return {initWebSocket, closeWebSocket, sendBpm, sendColor, sendBrightness, sendAnimation, sendEvent, getValues};
 }
 
 //TOOLS functions

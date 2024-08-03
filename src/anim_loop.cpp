@@ -8,151 +8,156 @@ void animation_loop()
   static bool state = false;
   int sum = 0;
 
-  switch (ledData.animation)
-    {
-    case STATIC:
-      static_animation();
-      break;
-
-    case BPM:
-      if (bpmTimer(ledData.bpm * 2)) //*2 because we want to change color every beat
+  if(ledData.event == BLACKOUT)
+  {
+    fill_solid(leds, NUM_LEDS, CRGB::Black);
+    FastLEDshowESP32();
+  }else{
+    switch (ledData.animation)
       {
-        if (state)
+      case STATIC:
+        static_animation();
+        break;
+      case BPM:
+        if (bpmTimer(ledData.bpm * 2)) //*2 because we want to change color every beat
         {
-          // turn all led red
-          for (int i = 0; i < NUM_LEDS; i++)
+          if (state)
           {
-            leds[i].setRGB(ledData.color.r, ledData.color.g, ledData.color.b);
+            // turn all led red
+            for (int i = 0; i < NUM_LEDS; i++)
+            {
+              leds[i].setRGB(ledData.color.r, ledData.color.g, ledData.color.b);
+            }
           }
+          else
+          {
+            fill_solid(leds, NUM_LEDS, CRGB::Black);
+          }
+          state = !state;
+          FastLEDshowESP32();
         }
-        else
+        break;
+
+      case STROBE:
+        if (millisTimer(hz_to_ms(STROBE_FREQ)))
         {
-          fill_solid(leds, NUM_LEDS, CRGB::Black);
+          if (state)
+          {
+            fill_solid(leds, NUM_LEDS, CRGB::White);
+          }
+          else
+          {
+            fill_solid(leds, NUM_LEDS, CRGB::Black);
+          }
+          state = !state;
         }
-        state = !state;
         FastLEDshowESP32();
-      }
-      break;
+        break;
 
-    case STROBE:
-      if (millisTimer(hz_to_ms(STROBE_FREQ)))
-      {
-        if (state)
+      case FADE_BLACK:
+        for (int i = 0; i < NUM_LEDS; i++)
         {
-          fill_solid(leds, NUM_LEDS, CRGB::White);
+          sum += leds[i].r + leds[i].g + leds[i].b;
         }
-        else
+        if (sum > 0)
         {
-          fill_solid(leds, NUM_LEDS, CRGB::Black);
+          fadeOutBPM(ledData.bpm);
+          FastLEDshowESP32();
         }
-        state = !state;
-      }
-      FastLEDshowESP32();
-      break;
+        break;
 
-    case FADE_BLACK:
-      for (int i = 0; i < NUM_LEDS; i++)
-      {
-        sum += leds[i].r + leds[i].g + leds[i].b;
-      }
-      if (sum > 0)
-      {
-        fadeOutBPM(ledData.bpm);
-        FastLEDshowESP32();
-      }
-      break;
+      case WAVE:
+        if (millisTimer(bpm_to_ms(ledData.bpm) / ANIMATION_STEPS))
+        {
+          static int step = 0;
+          step = (step + 1) % ANIMATION_STEPS;
+          wave(
+              step,
+              CRGB(ledData.color.r, ledData.color.g, ledData.color.b),
+              complementary_color(ledData.color.r, ledData.color.g, ledData.color.b));
+          FastLEDshowESP32();
+        }
+        break;
 
-    case WAVE:
-      if (millisTimer(bpm_to_ms(ledData.bpm) / ANIMATION_STEPS))
-      {
-        static int step = 0;
-        step = (step + 1) % ANIMATION_STEPS;
-        wave(
-            step,
-            CRGB(ledData.color.r, ledData.color.g, ledData.color.b),
-            complementary_color(ledData.color.r, ledData.color.g, ledData.color.b));
-        FastLEDshowESP32();
-      }
-      break;
+      case WAVE_FULL:
+        if (millisTimer(bpm_to_ms(ledData.bpm) / ANIMATION_STEPS))
+        {
+          static int step = 0;
+          step = (step + 1) % ANIMATION_STEPS;
+          wave_full(
+              step,
+              CRGB(ledData.color.r, ledData.color.g, ledData.color.b),
+              complementary_color(ledData.color.r, ledData.color.g, ledData.color.b));
+          FastLEDshowESP32();
+        }
+        break;
 
-    case WAVE_FULL:
-      if (millisTimer(bpm_to_ms(ledData.bpm) / ANIMATION_STEPS))
-      {
-        static int step = 0;
-        step = (step + 1) % ANIMATION_STEPS;
-        wave_full(
-            step,
-            CRGB(ledData.color.r, ledData.color.g, ledData.color.b),
-            complementary_color(ledData.color.r, ledData.color.g, ledData.color.b));
-        FastLEDshowESP32();
-      }
-      break;
+      case STROBE_SPARKLING:
+        if (millisTimer(bpm_to_ms(ledData.bpm) / ANIMATION_STEPS))
+        {
+          static int step = 0;
+          step = (step + 1) % ANIMATION_STEPS;
+          strobe_sparkling(
+              step,
+              CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
+          FastLEDshowESP32();
+        }
+        break;
 
-    case STROBE_SPARKLING:
-      if (millisTimer(bpm_to_ms(ledData.bpm) / ANIMATION_STEPS))
-      {
-        static int step = 0;
-        step = (step + 1) % ANIMATION_STEPS;
-        strobe_sparkling(
-            step,
-            CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
-        FastLEDshowESP32();
-      }
-      break;
+      case PULSE:
+        if (millisTimer(bpm_to_ms(ledData.bpm) / PULSE_STEPS))
+        {
+          uint8_t pulse_brightness = sin8(millis() / 1000.0 * ledData.bpm);
+          uint8_t pulseR = scale8(ledData.color.r, pulse_brightness);
+          uint8_t pulseG = scale8(ledData.color.g, pulse_brightness);
+          uint8_t pulseB = scale8(ledData.color.b, pulse_brightness);
+          fill_solid(leds, NUM_LEDS, CRGB(pulseR, pulseG, pulseB));
+          FastLEDshowESP32();
+        }
+        break;
 
-    case PULSE:
-      if (millisTimer(bpm_to_ms(ledData.bpm) / PULSE_STEPS))
-      {
-        uint8_t pulse_brightness = sin8(millis() / 1000.0 * ledData.bpm);
-        uint8_t pulseR = scale8(ledData.color.r, pulse_brightness);
-        uint8_t pulseG = scale8(ledData.color.g, pulse_brightness);
-        uint8_t pulseB = scale8(ledData.color.b, pulse_brightness);
-        fill_solid(leds, NUM_LEDS, CRGB(pulseR, pulseG, pulseB));
-        FastLEDshowESP32();
-      }
-      break;
+      case SLIDERAIN:
+        if (millisTimer(bpm_to_ms(ledData.bpm) / NB_LIGNE))
+        {
+          static int step = 0;
+          step = (step + 1) % NB_LIGNE;
+          slide_rain(
+              step,
+              CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
+        }
+        break;
 
-    case SLIDERAIN:
-      if (millisTimer(bpm_to_ms(ledData.bpm) / NB_LIGNE))
-      {
-        static int step = 0;
-        step = (step + 1) % NB_LIGNE;
-        slide_rain(
-            step,
-            CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
-      }
-      break;
+      case SLIDE_X_LEFT:
+        if (millisTimer(bpm_to_ms(ledData.bpm) / NB_LIGNE))
+        {
+          static int step = 0;
+          step = (step + 1) % NB_LIGNE;
+          slideline(
+              step,
+              CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
+        }
+        break;
 
-    case SLIDE_X_LEFT:
-      if (millisTimer(bpm_to_ms(ledData.bpm) / NB_LIGNE))
-      {
-        static int step = 0;
-        step = (step + 1) % NB_LIGNE;
-        slideline(
-            step,
-            CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
-      }
-      break;
-
-      case SLIDE_Y_UP:
-      if (millisTimer(bpm_to_ms(ledData.bpm) / NB_LED_LIGNE))
-      {
-        static int step = 0;
-        step = (step + 1) % NB_LIGNE;
-        slide_front_back(
-            step,
-            CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
-      }
-      case FLASH_RANDOM_STICK:
-      //Flash a random stick each 1/4 of the beat
-      if (millisTimer(bpm_to_ms(ledData.bpm) / 4))
-      {
-        light_random_stick(
-        CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
-      }
-    default:
-      break;
-  } 
+        case SLIDE_Y_UP:
+        if (millisTimer(bpm_to_ms(ledData.bpm) / NB_LED_LIGNE /2))
+        {
+          static int step = 0;
+          step = (step + 1) % NB_LED_LIGNE;
+          slide_front_back(
+              step,
+              CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
+        }
+        case FLASH_RANDOM_STICK:
+        //Flash a random stick each 1/4 of the beat
+        if (millisTimer(bpm_to_ms(ledData.bpm) / 4))
+        {
+          light_random_stick(
+          CRGB(ledData.color.r, ledData.color.g, ledData.color.b));
+        }
+      default:
+        break;
+    }
+  }
 }
 
 bool bpmTimer(float bpm)

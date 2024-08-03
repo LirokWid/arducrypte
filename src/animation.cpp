@@ -148,38 +148,37 @@ void beat_bpm(int durationMs, CRGB color1, CRGB color2)
 }
 
 void slide_front_back(int step, CRGB color)
-{
-  //Light the line step position in the x axis
-/*
-  | : stick
-  _ : connection
-   ___    ___
-  |  |   |  |
-  |  |   |  |
-  |  |___|  | 
-  0         
-  */
+{//Light the line step position in the x axis
 
   //turn off all the previous line
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    leds[i] = CRGB::Black; // Éteint toutes les LED
-  }
+  fill_solid(leds, NUM_LEDS, CRGB::Black);
 
-  for (int i = 0; i < STICK_X_NB; i++)
-  {
-    //Color the line in the X direction
-    if(i % 2 == 0) //if the line is pair
-    {
-      leds[(i*NB_LED_Y  ) + step] = color;
-    }else{
-      leds[(i*NB_LED_Y+1) - step] = color;
+
+
+  for (int i = 0; i < STICK_X_NB; i++) {
+    int baseIndex = i * NB_LED_Y;
+    uint8_t led_nb_per_line = 4;
+
+    // Color the line in the X direction
+    if (i % 2 == 0) {  // If the line is even
+      leds[baseIndex + step] = color;
+      for (int j = 1; j <= led_nb_per_line && step - j >= 0; j++) {
+        leds[baseIndex + step + j] = color;  // Line is two LEDs wide
+      }
+    } else {  // If the line is odd
+      int oddLineIndex = (i + 1) * NB_LED_Y - step;
+      leds[oddLineIndex] = color;
+      for (int j = 1; j <= led_nb_per_line && step - j >= 0; j++) {
+        leds[oddLineIndex - j] = color;  // Line is two LEDs wide
+      }
     }
   }
+  FastLEDshowESP32();
 }
+
 void light_random_stick(CRGB color)
 {
   turn_off();
   change_stick_color(random_stick_no_repeat(),color);
-  
+  FastLEDshowESP32();
 }

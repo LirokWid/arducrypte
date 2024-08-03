@@ -41,10 +41,12 @@ struct mainData
   float bpm;
   Color color;
   int animation;
+  bool animation_changed;
   int brightness;
   int animationSpeed;
 
   int event;
+  bool event_changed;
 };
 extern mainData ledData;
 
@@ -66,6 +68,13 @@ enum animation
   SLIDE_X_LEFT,
   SLIDE_Y_UP,
   FLASH_RANDOM_STICK
+};
+
+enum event
+{
+  NONE,
+  //FADE_BLACK,
+  BLACKOUT
 };
 
 /**

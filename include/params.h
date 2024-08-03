@@ -7,6 +7,8 @@
 #define STICK_Y_NB 3
 
 #define NUM_LEDS STICK_LED_NB*STICK_NB
+
+
 #define NB_LED_Y STICK_LED_NB*STICK_Y_NB
 
 

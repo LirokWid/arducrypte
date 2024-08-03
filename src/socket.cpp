@@ -32,8 +32,13 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       ledData.color.b = (valeurHex & 0xFF);
     }
     if(message.indexOf("ANIMATION:") >= 0){
+      ledData.animation_changed = 1;
       Serial.println(message);
       ledData.animation = message.substring(10).toInt();
+    }
+    if(message.indexOf("EVENT:") >= 0){
+      Serial.println(message);
+      ledData.event = message.substring(6).toInt();
     }
     if(message.indexOf("BRIGHTNESS:") >= 0){
       Serial.println(message);

@@ -23,6 +23,10 @@ void setup()
   Serial.begin(115200);
 
   ledData.bpm = 140;
+  ledData.brightness = 85;
+  ledData.color.r = ledData.brightness;
+  ledData.color.g = ledData.brightness;
+  ledData.color.b = ledData.brightness;
   FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS); // for GRB LEDs
   Serial.print("Main code running on core ");
   Serial.println(xPortGetCoreID());
@@ -34,6 +38,7 @@ void setup()
 void loop()
 {
   event_loop();
+  //TODO: Handle the event vs animation priority
   animation_loop();
   cleanupClients();
 }
